@@ -1,4 +1,4 @@
-package com.dayushman.galleryapp.features.gallery.data.model
+package com.dayushman.galleryapp.feature_gallery.data.model
 
 import android.net.Uri
 

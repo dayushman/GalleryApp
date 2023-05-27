@@ -1,4 +1,4 @@
-package com.dayushman.galleryapp.features.gallery.presentation.adapter
+package com.dayushman.galleryapp.feature_gallery.presentation.adapter
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.dayushman.galleryapp.features.gallery.data.model.LocalImageData
+import com.dayushman.galleryapp.feature_gallery.data.model.LocalImageData
 import com.dayushman.galleryapp.databinding.ImageItemLayoutBinding
 import com.dayushman.galleryapp.utils.loadGlide
-import javax.inject.Inject
 
 class GalleryPagingAdapter (val onImageClicked : ((Uri?)->Unit)?=null): PagingDataAdapter<LocalImageData, LocalImageViewHolder>(
     diffCallback

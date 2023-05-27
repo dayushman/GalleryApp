@@ -1,16 +1,15 @@
-package com.dayushman.galleryapp.features.gallery.data
+package com.dayushman.galleryapp.feature_gallery.gallery.data
 
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import com.dayushman.galleryapp.features.gallery.data.model.LocalImageData
-import com.dayushman.galleryapp.features.gallery.domain.repository.GalleryRepo
+import com.dayushman.galleryapp.feature_gallery.data.model.LocalImageData
 import javax.inject.Inject
 
-class GalleryRepoImpl  @Inject constructor(private val contentResolver: ContentResolver): GalleryRepo {
-    override suspend fun getImages(startIndex: Int, endIndex: Int): List<LocalImageData> {
+class LocalImagesService  @Inject constructor(private val contentResolver: ContentResolver) {
+    fun getImages(searchString : String?,startIndex: Int, endIndex: Int): List<LocalImageData> {
         val localImageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
         } else {
@@ -22,16 +21,24 @@ class GalleryRepoImpl  @Inject constructor(private val contentResolver: ContentR
             MediaStore.Images.Media.WIDTH,
             MediaStore.Images.Media.HEIGHT,
         )
+        val selection = if (searchString == null) null else MediaStore.Images.Media.DISPLAY_NAME + " LIKE ?"
+        val selectionArgs = if (searchString == null) null else arrayOf("$searchString%")
+
         val images = mutableListOf<LocalImageData>()
-        val contentCursor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) contentResolver.query(
+        val contentCursor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){ contentResolver.query(
             localImageUri,
             projections, Bundle().apply {
                 putInt(ContentResolver.QUERY_ARG_LIMIT, endIndex-startIndex)
                 putInt(ContentResolver.QUERY_ARG_OFFSET,startIndex)
+                putString(ContentResolver.QUERY_ARG_SQL_SELECTION,selection)
+                putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS,selectionArgs)
+                putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, arrayOf(MediaStore.Images.Media.DATE_TAKEN))
+                putInt(ContentResolver.QUERY_ARG_SORT_DIRECTION, ContentResolver.QUERY_SORT_DIRECTION_ASCENDING)
+
             }, null
-        ) else contentResolver.query(
+        ) }else contentResolver.query(
             localImageUri,
-            projections, null, null, "${MediaStore.Images.Media.DISPLAY_NAME} ASC  LIMIT ${endIndex-startIndex} OFFSET $startIndex"
+            projections, selection, selectionArgs, "${MediaStore.Images.Media.DATE_TAKEN} ASC  LIMIT ${endIndex-startIndex} OFFSET $startIndex"
         )
 
          contentCursor?.use { cursor ->

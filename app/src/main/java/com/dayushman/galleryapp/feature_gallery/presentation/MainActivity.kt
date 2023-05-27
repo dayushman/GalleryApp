@@ -1,42 +1,39 @@
-package com.dayushman.galleryapp.features.gallery.presentation
+package com.dayushman.galleryapp.feature_gallery.presentation
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.view.Menu
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.GridLayoutManager
 import com.dayushman.galleryapp.R
-import com.dayushman.galleryapp.features.FullscreenImageActivity
 import com.dayushman.galleryapp.databinding.ActivityMainBinding
-import com.dayushman.galleryapp.features.gallery.presentation.adapter.GalleryPagingAdapter
+import com.dayushman.galleryapp.feature_gallery.FullscreenImageActivity
+import com.dayushman.galleryapp.feature_gallery.presentation.adapter.GalleryPagingAdapter
 import com.dayushman.galleryapp.utils.gone
 import com.dayushman.galleryapp.utils.visible
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
-    private lateinit var permissionLauncher: ActivityResultLauncher<String>
+    lateinit var permissionLauncher: ActivityResultLauncher<String>
 
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
 
-    private lateinit var galleryPagingAdapter: GalleryPagingAdapter
+    lateinit var galleryPagingAdapter: GalleryPagingAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,9 +42,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpRecyclerView()
-        if (isReadStoragePermissionGranted()) {
-            setUpObserver()
-        } else {
+        setUpObserver()
+        if (!isReadStoragePermissionGranted()) {
             getPermissions()
         }
     }
@@ -69,14 +65,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpObserver() {
-        lifecycleScope.launch {
-            mainActivityViewModel.getLocalImagesPagingDataFlow().collectLatest { pagingData ->
-                galleryPagingAdapter.submitData(pagingData)
-            }
+        mainActivityViewModel.flpw.observe(this@MainActivity) { pagingData ->
+            galleryPagingAdapter.submitData(this@MainActivity.lifecycle, pagingData)
         }
         galleryPagingAdapter.addLoadStateListener { loadState ->
             if (loadState.prepend !is LoadState.Loading && loadState.prepend.endOfPaginationReached) {
                 binding.pbLoading.gone()
+                binding.llEmptyOrErrorState.gone()
                 binding.rvImageList.visible()
             }
             if (loadState.append !is LoadState.Loading && loadState.append.endOfPaginationReached) {
@@ -85,12 +80,43 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        val menuItem = menu?.findItem(R.id.action_search)
+        val searchView = menuItem?.actionView as SearchView
+        searchView.queryHint = "Search images here"
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if ((query?.length ?: 0) >= 3 || query.isNullOrEmpty()) {
+                    mainActivityViewModel.searchImages(query)
+                    return true
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if ((newText?.length ?: 0) >= 3 || newText.isNullOrEmpty()) {
+                    mainActivityViewModel.searchImages(newText)
+                    return true
+                }
+                return false
+            }
+
+        })
+        return true
+    }
+
     private fun showEmptyState() {
         binding.apply {
             rvImageList.gone()
             pbLoading.gone()
             llEmptyOrErrorState.visible()
-            ivErrorStateDrawable.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.empty_state_image))
+            ivErrorStateDrawable.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this@MainActivity,
+                    R.drawable.empty_state_image
+                )
+            )
             tvErrorText.text = getText(R.string.empty_state_text)
         }
     }
@@ -111,7 +137,12 @@ class MainActivity : AppCompatActivity() {
             rvImageList.gone()
             pbLoading.gone()
             llEmptyOrErrorState.visible()
-            ivErrorStateDrawable.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.error_state_image))
+            ivErrorStateDrawable.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this@MainActivity,
+                    R.drawable.error_state_image
+                )
+            )
             tvErrorText.text = getText(R.string.no_permission_text)
         }
     }

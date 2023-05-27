@@ -1,17 +1,10 @@
-package com.dayushman.galleryapp.features
+package com.dayushman.galleryapp.feature_gallery
 
 import android.net.Uri
 import android.os.Bundle
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.dayushman.galleryapp.databinding.FullScreenDetailActivityBinding
-import com.dayushman.galleryapp.utils.loadGlide
 import com.dayushman.galleryapp.utils.loadGlideWithOutTransform
-import kotlin.math.max
-import kotlin.math.min
 
 class FullscreenImageActivity : AppCompatActivity() {
 

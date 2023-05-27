@@ -2,5 +2,7 @@
     <string name="app_name">GalleryApp</string>
     <string name="image">Image</string>
     <string name="no_permission_text">Don\'t have the permissions for accessing your pictures</string>
-    <string name="empty_state_text">You don\'t have any pictures in your phone</string>
+    <string name="empty_state_text">No images found</string>
+    <string name="search_placeholder">Search Images</string>
+    <string name="search">Search</string>
 </resources>
