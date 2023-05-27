@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".features.presentation.MainActivity">
+    tools:context=".features.gallery.presentation.MainActivity">
 
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/rv_image_list"
@@ -14,10 +14,13 @@
     android:fadeScrollbars="false"
     android:layout_height="match_parent" />
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
+    <ProgressBar
         android:id="@+id/pb_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/lightBlack"
+        android:indeterminateTintMode="src_atop"
         android:layout_gravity="center" />
 
     <androidx.appcompat.widget.LinearLayoutCompat

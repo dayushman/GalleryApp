@@ -1,6 +1,6 @@
 package com.dayushman.galleryapp.utils
 
-import com.dayushman.galleryapp.features.data.model.LocalImageData
+import com.dayushman.galleryapp.features.gallery.data.model.LocalImageData
 
 sealed class ResultUIModel<out T : Any> {
 

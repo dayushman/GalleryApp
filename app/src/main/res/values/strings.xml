@@ -2,5 +2,5 @@
     <string name="app_name">GalleryApp</string>
     <string name="image">Image</string>
     <string name="no_permission_text">Don\'t have the permissions for accessing your pictures</string>
-    <string name="empty_state_text">You don\'t have any pictures in phone</string>
+    <string name="empty_state_text">You don\'t have any pictures in your phone</string>
 </resources>
