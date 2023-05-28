@@ -16,7 +16,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.paging.LoadState
 import com.dayushman.galleryapp.R
 import com.dayushman.galleryapp.databinding.ActivityMainBinding
-import com.dayushman.galleryapp.feature_gallery.FullscreenImageActivity
+import com.dayushman.galleryapp.feature_detail_image.FullscreenImageActivity
+import com.dayushman.galleryapp.feature_detail_image.FullscreenImageActivity.Companion.IMAGE_URI_TAG
 import com.dayushman.galleryapp.feature_gallery.presentation.adapter.GalleryPagingAdapter
 import com.dayushman.galleryapp.utils.gone
 import com.dayushman.galleryapp.utils.visible
@@ -30,11 +31,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     lateinit var permissionLauncher: ActivityResultLauncher<String>
-
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
-
     lateinit var galleryPagingAdapter: GalleryPagingAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUpRecyclerView() {
         galleryPagingAdapter = GalleryPagingAdapter {
             val intent = Intent(this, FullscreenImageActivity::class.java)
-            intent.putExtra("imageUri", it.toString())
+            intent.putExtra(IMAGE_URI_TAG, it.toString())
             startActivity(intent)
         }
         binding.rvImageList.apply {
@@ -65,14 +63,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpObserver() {
-        mainActivityViewModel.flpw.observe(this@MainActivity) { pagingData ->
+        mainActivityViewModel.imagesLiveData.observe(this@MainActivity) { pagingData ->
             galleryPagingAdapter.submitData(this@MainActivity.lifecycle, pagingData)
         }
         galleryPagingAdapter.addLoadStateListener { loadState ->
             if (loadState.prepend !is LoadState.Loading && loadState.prepend.endOfPaginationReached) {
-                binding.pbLoading.gone()
-                binding.llEmptyOrErrorState.gone()
-                binding.rvImageList.visible()
+                showImages()
             }
             if (loadState.append !is LoadState.Loading && loadState.append.endOfPaginationReached) {
                 showEmptyState()
@@ -80,11 +76,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showImages() {
+        binding.pbLoading.gone()
+        binding.llEmptyOrErrorState.gone()
+        binding.rvImageList.visible()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         val menuItem = menu?.findItem(R.id.action_search)
         val searchView = menuItem?.actionView as SearchView
-        searchView.queryHint = "Search images here"
+        searchView.queryHint = getString(R.string.search_hint)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if ((query?.length ?: 0) >= 3 || query.isNullOrEmpty()) {
@@ -124,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     private fun getPermissions() {
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { value ->
             if (value) {
-                setUpObserver()
+                mainActivityViewModel.searchImages("")
             } else {
                 showErrorState()
             }
@@ -143,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                     R.drawable.error_state_image
                 )
             )
-            tvErrorText.text = getText(R.string.no_permission_text)
+            tvErrorText.text = getString(R.string.no_permission_text)
         }
     }
 

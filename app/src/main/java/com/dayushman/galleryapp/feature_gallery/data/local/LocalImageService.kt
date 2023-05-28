@@ -1,4 +1,4 @@
-package com.dayushman.galleryapp.feature_gallery.gallery.data
+package com.dayushman.galleryapp.feature_gallery.data.local
 
 import android.content.ContentResolver
 import android.content.ContentUris

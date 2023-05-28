@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_placeholder"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        android:contentDescription="@string/images_from_gallery" />
 
     <TextView
         android:id="@+id/tv_image_name"
@@ -22,6 +23,8 @@
         android:maxLines="1"
         android:layout_marginTop="2dp"
         tools:text="Heelpw.jpg"
+        android:textSize="12sp"
+        android:textColor="@color/white"
         android:textAlignment="center"
         android:ellipsize="end" />
 

@@ -5,4 +5,7 @@
     <string name="empty_state_text">No images found</string>
     <string name="search_placeholder">Search Images</string>
     <string name="search">Search</string>
+    <string name="search_hint">Search images here</string>
+    <string name="images_from_gallery">Images from gallery</string>
+    <string name="error_image">Error Image</string>
 </resources>

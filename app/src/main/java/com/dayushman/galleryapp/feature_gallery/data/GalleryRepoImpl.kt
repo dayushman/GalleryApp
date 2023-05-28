@@ -1,6 +1,6 @@
 package com.dayushman.galleryapp.feature_gallery.data
 
-import com.dayushman.galleryapp.feature_gallery.gallery.data.LocalImagesService
+import com.dayushman.galleryapp.feature_gallery.data.local.LocalImagesService
 import com.dayushman.galleryapp.feature_gallery.data.model.LocalImageData
 import com.dayushman.galleryapp.feature_gallery.domain.repository.GalleryRepo
 import javax.inject.Inject

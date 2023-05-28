@@ -2,16 +2,17 @@ package com.dayushman.galleryapp.feature_gallery.data.local
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.bumptech.glide.load.HttpException
 import com.dayushman.galleryapp.feature_gallery.data.model.LocalImageData
 import com.dayushman.galleryapp.feature_gallery.domain.repository.GalleryRepo
 import java.io.IOException
 
-class GalleryPagingSource constructor(private val galleryRepo: GalleryRepo, private val searchString : String? ) : PagingSource<Int, LocalImageData>() {
-    companion object{
-        const val DEFAULT_PAGE_INDEX = 0;
-        const val PAGE_SIZE = 60;
+class GalleryPagingSource constructor(private val galleryRepo: GalleryRepo, private val searchString: String?) :
+    PagingSource<Int, LocalImageData>() {
+    companion object {
+        const val DEFAULT_PAGE_INDEX = 0
+        const val PAGE_SIZE = 60
     }
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, LocalImageData> {
         val page = params.key ?: DEFAULT_PAGE_INDEX
         return try {
@@ -23,7 +24,7 @@ class GalleryPagingSource constructor(private val galleryRepo: GalleryRepo, priv
             )
         } catch (exception: IOException) {
             return LoadResult.Error(exception)
-        } catch (exception: HttpException) {
+        } catch (exception: SecurityException) {
             return LoadResult.Error(exception)
         }
     }

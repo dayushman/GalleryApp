@@ -10,7 +10,7 @@ import com.dayushman.galleryapp.feature_gallery.data.model.LocalImageData
 import com.dayushman.galleryapp.databinding.ImageItemLayoutBinding
 import com.dayushman.galleryapp.utils.loadGlide
 
-class GalleryPagingAdapter (val onImageClicked : ((Uri?)->Unit)?=null): PagingDataAdapter<LocalImageData, LocalImageViewHolder>(
+class GalleryPagingAdapter (private val onImageClicked : ((Uri?)->Unit)?=null): PagingDataAdapter<LocalImageData, LocalImageViewHolder>(
     diffCallback
 ) {
 

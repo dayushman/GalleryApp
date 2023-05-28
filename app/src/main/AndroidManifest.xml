@@ -20,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".feature_gallery.FullscreenImageActivity" android:theme="@style/Theme.GalleryApp" />
+        <activity android:name=".feature_detail_image.FullscreenImageActivity" android:theme="@style/Theme.GalleryApp" />
     </application>
 
 </manifest>

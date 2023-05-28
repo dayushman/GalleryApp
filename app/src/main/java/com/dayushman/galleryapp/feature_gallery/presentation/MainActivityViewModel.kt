@@ -19,12 +19,12 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(private val galleryRepo: GalleryRepo)  : ViewModel() {
 
 
-    private var searchString = MutableLiveData("")
-    val flpw =  searchString.switchMap {
-        Pager(PagingConfig(pageSize = PAGE_SIZE)){ GalleryPagingSource(galleryRepo,searchString.value) }.flow.cachedIn(viewModelScope).asLiveData()
+    private var queryLiveData = MutableLiveData("")
+    val imagesLiveData =  queryLiveData.switchMap {
+        Pager(PagingConfig(pageSize = PAGE_SIZE)){ GalleryPagingSource(galleryRepo,queryLiveData.value) }.flow.cachedIn(viewModelScope).asLiveData()
     }
 
     fun searchImages(query : String?){
-        searchString.value = query
+        queryLiveData.value = query
     }
 }
